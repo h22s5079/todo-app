@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# My ToDo - React + TypeScript で作ったタスク管理アプリ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+シンプルながら実用的な機能を備えたToDoアプリです。  
+React、TypeScript、Tailwind CSSを使った実用的なアプリを目指しました。
 
-Currently, two official plugins are available:
+## スクリーンショット
+　　![alt text](todo-App実行画面.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 主な機能
 
-## React Compiler
+・タスクのCRUD操作（作成・編集・削除・完了切り替え）
+・締切日の設定と、期限切れ・当日・直近のステータス表示
+・カテゴリ分類（仕事・プライベート・勉強・その他）
+・完了状態 × カテゴリの複合フィルター
+・ダークモード（OS設定追従＋手動切り替え）
+・localStorageによるデータ永続化
+・ダブルクリックで編集モード（テキスト・締切・カテゴリすべて変更可能）
+・キーボード操作対応（Enter保存 / Esc キャンセル）
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 使用技術
 
-## Expanding the ESLint configuration
+| カテゴリ | 技術 |
+| --- | --- |
+| 言語 | TypeScript |
+| フレームワーク | React 19 |
+| ビルドツール | Vite |
+| スタイリング | Tailwind CSS v4 |
+| データ永続化 | localStorage |
+| デプロイ | Vercel |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 工夫した点
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1. 型安全な設計
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+TypeScriptのユニオン型（`'all' | 'active' | 'completed'`）とRecord型を活用し、不正な値が入らない設計にしました。カテゴリ設定を1箇所のオブジェクトに集約することで、新しいカテゴリの追加が1行で済む保守性の高い構造にしています。
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 2. データのマイグレーション処理
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+localStorageから読み込む際、古いバージョンで作成されたデータに新フィールド（カテゴリ）がなくても自動で補完されるようにし、後方互換性を保っています。
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 3. ユーザー体験への配慮
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+・編集モードに入った瞬間に入力欄へ自動フォーカス＆全選択
+・Enter / Esc / ボタン と複数の確定方法を提供
+・締切が近い順に自動ソート
+・期限切れタスクがある場合は画面上部にアラート表示
+・OS設定がダークモードなら初回起動時もダークモード
+
+### 4. 状態管理の使い分け
+
+・`useState` でアプリの状態（タスク・フィルター・編集状態など）を管理
+・`useEffect` で localStorage への自動保存とダークモード切り替えを実装
+・`useRef` で編集入力欄への直接アクセス（フォーカス制御）
+
+## アプリ起動準備
+アプリを起動するには、PCに以下のものをダウンロードする必要があります。
+・Node.js（v18以上）：https://nodejs.org/
+・Git：https://git-scm.com/
+・テキストエディタ（VS Code推奨）
+
+## ローカルでの起動方法
+
+```bash
+git clone https://github.com/h22s5079/todo-app.git
+cd todo-app
+npm install
+npm run dev
